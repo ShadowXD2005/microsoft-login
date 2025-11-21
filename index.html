@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Helper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 16px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 18px;
+      padding: 20px 22px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 14px;
+    }
+
+    .disclaimer {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 14px;
+      border-left: 3px solid #6b7280;
+      padding-left: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #4f46e5;
+      color: #ffffff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 28px rgba(79, 70, 229, 0.8);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(79, 70, 229, 1);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .status {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .status.ok {
+      color: #22c55e;
+    }
+
+    .status.error {
+      color: #ef4444;
+    }
+
+    .coords {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    a.map-link {
+      font-size: 0.8rem;
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    a.map-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>City Helper 🌍</h1>
+    <p>
+      This site asks for your location (if you allow it) so I can better help you
+      with tips about this city for my university project.
+    </p>
+
+    <div class="disclaimer">
+      I will receive your approximate GPS coordinates and device info.
+      Please only continue if you are OK with that.
+    </div>
+
+    <button id="shareBtn">Share my location</button>
+
+    <div id="status" class="status"></div>
+    <div id="coords" class="coords"></div>
+    <a id="mapLink" class="map-link" href="#" target="_blank" style="display:none;">
+      Open this location in Google Maps
+    </a>
+
+    <div class="footer">
+      Made for a university project · You can close this page anytime.
+    </div>
+  </div>
+
+  <script>
+    const shareBtn = document.getElementById("shareBtn");
+    const statusEl = document.getElementById("status");
+    const coordsEl = document.getElementById("coords");
+    const mapLinkEl = document.getElementById("mapLink");
+
+    // TODO: replace this with your own webhook URL
+    const ENDPOINT_URL = "https://webhook.site/4107b96f-3820-43af-b34c-087cfb28eb02";
+
+    function setStatus(message, type = "") {
+      statusEl.textContent = message;
+      statusEl.className = "status " + (type || "");
+    }
+
+    async function sendLocation(lat, lon, accuracy) {
+      const payload = {
+        latitude: lat,
+        longitude: lon,
+        accuracy_m: accuracy,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
+
+        try {
+    await fetch(ENDPOINT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    // Even if CORS blocks the response, the request usually still reaches the server
+    setStatus("Location sent (check your panel to confirm) ✔", "ok");
+  } catch (err) {
+    console.error(err);
+    // For local file:// tests, this is likely just a browser security warning
+    setStatus("Your location was read. If you see it on the server, the send worked.", "ok");
+  }
+
+    }
+
+    shareBtn.addEventListener("click", () => {
+      if (!("geolocation" in navigator)) {
+        setStatus("Geolocation is not supported on this device.", "error");
+        return;
+      }
+
+      setStatus("Requesting your location…");
+      shareBtn.disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const accuracy = pos.coords.accuracy; // meters
+
+          coordsEl.textContent = `Latitude: ${lat.toFixed(6)}, Longitude: ${lon.toFixed(6)} (±${Math.round(accuracy)}m)`;
+
+          const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+          mapLinkEl.href = mapsUrl;
+          mapLinkEl.style.display = "inline-block";
+
+          setStatus("Location received. Sending to server…");
+
+          await sendLocation(lat, lon, accuracy);
+          shareBtn.disabled = false;
+        },
+        (err) => {
+          console.error(err);
+          if (err.code === err.PERMISSION_DENIED) {
+            setStatus("You denied location permission.", "error");
+          } else {
+            setStatus("Failed to get your location.", "error");
+          }
+          shareBtn.disabled = false;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    });
+  </script>
+</body>
+</html>
